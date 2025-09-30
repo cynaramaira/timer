@@ -3,134 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timer Progressivo</title>
+    <title>Timer de Foco & Atividades</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f5f5f5;
+            font-family: 'Poppins', sans-serif;
         }
-        .timer-container {
-            text-align: center;
-            background-color: white;
-            padding: 30px;
+        /* Estilo customizado para o scrollbar no tema claro */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f8fafc; /* bg-slate-50 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e2e8f0; /* bg-slate-200 */
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 300px;
         }
-        .timer-display {
-            font-size: 48px;
-            font-weight: bold;
-            margin: 20px 0;
-            color: #333;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #cbd5e1; /* bg-slate-300 */
         }
-        .timer-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
+        /* Animação de fade-in para os itens da lista */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        button {
-            background-color: #2eaadc;
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        button:hover {
-            background-color: #2391bc;
-        }
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        #reset {
-            background-color: #e74c3c;
-        }
-        #reset:hover {
-            background-color: #c0392b;
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
         }
     </style>
 </head>
-<body>
-    <div class="timer-container">
-        <h2>Timer Progressivo</h2>
-        <div class="timer-display" id="display">00:00:00</div>
-        <div class="timer-buttons">
-            <button id="start">Iniciar</button>
-            <button id="stop" disabled>Pausar</button>
-            <button id="reset">Zerar</button>
-        </div>
+<body class="bg-slate-50 text-gray-700 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-200 p-6 md:p-8">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-semibold text-gray-800">Timer de Foco</h1>
+            <p class="text-gray-500 mt-2">Registre suas atividades e mantenha a concentração.</p>
+        </header>
+
+        <main>
+            <!-- Seção do Timer -->
+            <div class="bg-slate-50 rounded-xl p-6 flex flex-col items-center border border-gray-100">
+                <div id="timer-display" class="text-5xl md:text-7xl font-light text-gray-700 tracking-wider">
+                    00:00:00
+                </div>
+                <div class="flex space-x-4 mt-6">
+                    <button id="start-pause-btn" class="px-8 py-3 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-xl transition-all duration-300 w-32 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-50 focus:ring-rose-400">
+                        Iniciar
+                    </button>
+                    <button id="reset-btn" class="px-8 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-xl transition-all duration-300 w-32 border border-gray-300/50">
+                        Zerar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Seção de Registro -->
+            <div class="mt-8">
+                <label for="activity-input" class="block mb-2 font-medium text-gray-600">O que você fez neste intervalo?</label>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <input type="text" id="activity-input" placeholder="Ex: Pesquisa para o projeto X" class="flex-grow bg-white border border-gray-200 text-gray-800 rounded-xl px-4 py-3 focus:ring-2 focus:ring-rose-400 focus:border-rose-400 outline-none transition-all duration-300">
+                    <button id="save-btn" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-all duration-300 flex-shrink-0">
+                        Salvar Intervalo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Seção dos Registros Salvos -->
+            <div class="mt-10">
+                <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                    <h2 class="text-2xl font-semibold text-gray-800">Registros do Dia</h2>
+                    <input type="date" id="date-picker" class="bg-slate-50 border border-gray-200 text-gray-600 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-rose-400 outline-none">
+                </div>
+                
+                <div id="log-container" class="bg-slate-50 rounded-lg p-3 h-64 overflow-y-auto border border-gray-100">
+                    <ul id="log-list" class="space-y-2">
+                        <!-- Itens do log serão inseridos aqui -->
+                    </ul>
+                     <p id="no-logs-message" class="text-gray-400 text-center mt-8">Nenhum registro para este dia ainda.</p>
+                </div>
+            </div>
+
+            <!-- Botão de Exportar -->
+            <div class="mt-8 text-center">
+                 <button id="export-btn" class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-600 text-sm font-medium rounded-lg transition-all duration-300 border border-gray-300/50">
+                    Exportar Todos os Dados (JSON)
+                </button>
+            </div>
+        </main>
+
     </div>
 
     <script>
-        let timer;
-        let isRunning = false;
-        let seconds = 0;
-        let minutes = 0;
-        let hours = 0;
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elementos do DOM
+            const timerDisplay = document.getElementById('timer-display');
+            const startPauseBtn = document.getElementById('start-pause-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const activityInput = document.getElementById('activity-input');
+            const saveBtn = document.getElementById('save-btn');
+            const logList = document.getElementById('log-list');
+            const datePicker = document.getElementById('date-picker');
+            const exportBtn = document.getElementById('export-btn');
+            const noLogsMessage = document.getElementById('no-logs-message');
 
-        const display = document.getElementById('display');
-        const startBtn = document.getElementById('start');
-        const stopBtn = document.getElementById('stop');
-        const resetBtn = document.getElementById('reset');
+            // Estado do Timer
+            let timerState = {
+                startTime: 0,
+                elapsedTime: 0,
+                intervalId: null,
+                isRunning: false,
+            };
 
-        function formatTime(value) {
-            return value.toString().padStart(2, '0');
-        }
+            const STORAGE_KEY = 'focusTimerLogs';
 
-        function updateDisplay() {
-            display.textContent = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
-        }
+            // --- Funções do Timer ---
 
-        function startTimer() {
-            if (isRunning) return;
-            
-            isRunning = true;
-            startBtn.disabled = true;
-            stopBtn.disabled = false;
-            
-            timer = setInterval(() => {
-                seconds++;
-                if (seconds === 60) {
-                    seconds = 0;
-                    minutes++;
-                    if (minutes === 60) {
-                        minutes = 0;
-                        hours++;
-                    }
+            function formatTime(ms) {
+                const totalSeconds = Math.floor(ms / 1000);
+                const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+                const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+                const seconds = String(totalSeconds % 60).padStart(2, '0');
+                return `${hours}:${minutes}:${seconds}`;
+            }
+
+            function updateTimerDisplay() {
+                const currentElapsedTime = getCurrentElapsedTime();
+                timerDisplay.textContent = formatTime(currentElapsedTime);
+                if (timerState.isRunning) {
+                     document.title = `${formatTime(currentElapsedTime)} - Rodando...`;
                 }
-                updateDisplay();
-            }, 1000);
-        }
-
-        function stopTimer() {
-            if (!isRunning) return;
+            }
             
-            isRunning = false;
-            clearInterval(timer);
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-        }
+            function getCurrentElapsedTime() {
+                 return timerState.isRunning
+                    ? Date.now() - timerState.startTime + timerState.elapsedTime
+                    : timerState.elapsedTime;
+            }
 
-        function resetTimer() {
-            stopTimer();
-            seconds = 0;
-            minutes = 0;
-            hours = 0;
-            updateDisplay();
-        }
+            function startTimer() {
+                if (timerState.isRunning) return;
+                timerState.isRunning = true;
+                timerState.startTime = Date.now();
+                timerState.intervalId = setInterval(updateTimerDisplay, 1000);
+                startPauseBtn.textContent = 'Pausar';
+                startPauseBtn.classList.remove('bg-rose-500', 'hover:bg-rose-600');
+                startPauseBtn.classList.add('bg-amber-500', 'hover:bg-amber-600');
+            }
 
-        startBtn.addEventListener('click', startTimer);
-        stopBtn.addEventListener('click', stopTimer);
-        resetBtn.addEventListener('click', resetTimer);
+            function pauseTimer() {
+                if (!timerState.isRunning) return;
+                timerState.isRunning = false;
+                clearInterval(timerState.intervalId);
+                timerState.elapsedTime += Date.now() - timerState.startTime;
+                startPauseBtn.textContent = 'Retomar';
+                startPauseBtn.classList.remove('bg-amber-500', 'hover:bg-amber-600');
+                startPauseBtn.classList.add('bg-rose-500', 'hover:bg-rose-600');
+                document.title = "Timer Pausado";
+            }
+            
+            function toggleTimer() {
+                if (timerState.isRunning) {
+                    pauseTimer();
+                } else {
+                    startTimer();
+                }
+            }
+
+            function resetTimer() {
+                pauseTimer();
+                timerState.elapsedTime = 0;
+                updateTimerDisplay();
+                startPauseBtn.textContent = 'Iniciar';
+                document.title = "Timer de Foco & Atividades";
+            }
+
+            // --- Funções de Armazenamento e Exibição de Logs ---
+
+            function getLogs() {
+                const logsJSON = localStorage.getItem(STORAGE_KEY);
+                return logsJSON ? JSON.parse(logsJSON) : {};
+            }
+
+            function saveLogs(logs) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+            }
+
+            function getFormattedDate(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+
+            function renderLogs(dateStr) {
+                logList.innerHTML = '';
+                const allLogs = getLogs();
+                const logsForDate = allLogs[dateStr] || [];
+                
+                noLogsMessage.classList.toggle('hidden', logsForDate.length > 0);
+
+                logsForDate.forEach((log, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'bg-white p-3 rounded-lg flex justify-between items-center animate-fade-in border border-gray-200/80';
+                    
+                    li.innerHTML = `
+                        <div class="flex items-center gap-4">
+                            <span class="font-medium text-rose-600 text-base">${log.time}</span>
+                            <span class="text-gray-600 text-sm">${log.description}</span>
+                        </div>
+                        <button data-index="${index}" class="delete-btn text-gray-400 hover:text-red-500 p-1 rounded-full transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    `;
+                    logList.appendChild(li);
+                });
+            }
+            
+            function saveCurrentLog() {
+                const description = activityInput.value.trim();
+                // Reset visual feedback
+                activityInput.classList.remove('ring-2', 'ring-red-400');
+                activityInput.placeholder = 'Ex: Pesquisa para o projeto X';
+
+                if (!description) {
+                    activityInput.classList.add('ring-2', 'ring-red-400');
+                    activityInput.placeholder = 'Descrição não pode estar vazia!';
+                    return;
+                }
+
+                const currentElapsedTime = getCurrentElapsedTime();
+
+                if (currentElapsedTime === 0) {
+                    startPauseBtn.classList.add('ring-2', 'ring-red-400');
+                    setTimeout(() => startPauseBtn.classList.remove('ring-2', 'ring-red-400'), 2000);
+                    return;
+                }
+                
+                const allLogs = getLogs();
+                const dateStr = getFormattedDate(new Date(datePicker.value + 'T00:00:00'));
+                
+                if (!allLogs[dateStr]) {
+                    allLogs[dateStr] = [];
+                }
+                
+                allLogs[dateStr].unshift({
+                    time: formatTime(currentElapsedTime),
+                    description: description
+                });
+
+                saveLogs(allLogs);
+                renderLogs(dateStr);
+                
+                // Limpa o input, mas não zera o timer
+                activityInput.value = '';
+            }
+            
+            function deleteLog(index) {
+                const dateStr = datePicker.value;
+                const allLogs = getLogs();
+                
+                if (allLogs[dateStr]) {
+                    allLogs[dateStr].splice(index, 1);
+                    if (allLogs[dateStr].length === 0) {
+                        delete allLogs[dateStr];
+                    }
+                    saveLogs(allLogs);
+                    renderLogs(dateStr);
+                }
+            }
+
+            function exportData() {
+                const allLogs = getLogs();
+                if (Object.keys(allLogs).length === 0) return;
+                const dataStr = JSON.stringify(allLogs, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `timer_logs_${getFormattedDate(new Date())}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            // --- Inicialização e Event Listeners ---
+            
+            function initialize() {
+                const todayStr = getFormattedDate(new Date());
+                datePicker.value = todayStr;
+                renderLogs(todayStr);
+
+                startPauseBtn.addEventListener('click', toggleTimer);
+                resetBtn.addEventListener('click', resetTimer);
+                saveBtn.addEventListener('click', saveCurrentLog);
+                datePicker.addEventListener('change', (e) => renderLogs(e.target.value));
+                exportBtn.addEventListener('click', exportData);
+                
+                logList.addEventListener('click', (e) => {
+                   if (e.target && e.target.classList.contains('delete-btn')) {
+                       const index = parseInt(e.target.getAttribute('data-index'), 10);
+                       deleteLog(index);
+                   } 
+                });
+            }
+
+            initialize();
+        });
     </script>
 </body>
 </html>
+
