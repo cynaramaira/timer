@@ -38,25 +38,25 @@
 </head>
 <body class="bg-slate-50 text-gray-700 flex items-center justify-center min-h-screen p-2 sm:p-4">
 
-    <div class="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
+    <div class="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6">
         
-        <header class="text-center mb-4">
-            <h1 class="text-xl font-semibold text-gray-800">Timer de Foco</h1>
-            <p class="text-xs text-gray-500 mt-1">Registre suas atividades e mantenha a concentração.</p>
+        <header class="text-center mb-6">
+            <h1 class="text-2xl md:text-3xl font-semibold text-gray-800">Timer de Foco</h1>
+            <p class="text-sm text-gray-500 mt-1">Registre suas atividades e mantenha a concentração.</p>
         </header>
 
         <main>
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Seção do Timer -->
-                <div class="bg-slate-50 rounded-lg p-3 flex flex-col items-center justify-center border border-gray-100 h-full">
-                    <div id="timer-display" class="text-4xl font-mono font-light text-gray-700 tracking-tight">
+                <div class="bg-slate-50 rounded-lg p-4 flex flex-col items-center justify-center border border-gray-100 h-full">
+                    <div id="timer-display" class="text-5xl md:text-6xl font-light text-gray-700 tracking-wider">
                         00:00:00
                     </div>
-                    <div class="flex flex-col space-y-2 mt-3 w-full">
-                        <button id="start-pause-btn" class="w-full py-2 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-50 focus:ring-rose-400 text-xs">
+                    <div class="flex space-x-3 mt-4">
+                        <button id="start-pause-btn" class="px-6 py-2 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-lg transition-all duration-300 w-28 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-50 focus:ring-rose-400 text-sm">
                             Iniciar
                         </button>
-                        <button id="reset-btn" class="w-full py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-all duration-300 border border-gray-300/50 text-xs">
+                        <button id="reset-btn" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-all duration-300 w-28 border border-gray-300/50 text-sm">
                             Zerar
                         </button>
                     </div>
@@ -64,11 +64,11 @@
 
                 <!-- Seção de Registro -->
                 <div class="flex flex-col justify-center h-full">
-                    <label for="activity-input" class="block mb-2 text-sm font-medium text-gray-600">O que você fez?</label>
-                    <div class="flex flex-col gap-2">
-                        <input type="text" id="activity-input" placeholder="Descreva a atividade..." class="w-full bg-white border border-gray-200 text-gray-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-rose-400 focus:border-rose-400 outline-none transition-all duration-300">
-                        <button id="save-btn" class="w-full px-5 py-2 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg transition-all duration-300 text-sm">
-                            Salvar
+                    <label for="activity-input" class="block mb-2 text-sm font-medium text-gray-600">O que você fez neste intervalo?</label>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="activity-input" placeholder="Ex: Pesquisa para o projeto X" class="flex-grow bg-white border border-gray-200 text-gray-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-rose-400 focus:border-rose-400 outline-none transition-all duration-300">
+                        <button id="save-btn" class="px-5 py-2 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg transition-all duration-300 flex-shrink-0 text-sm">
+                            Salvar Intervalo
                         </button>
                     </div>
                 </div>
@@ -76,26 +76,26 @@
 
 
             <!-- Seção dos Registros Salvos -->
-            <div class="mt-6">
-                <h2 class="text-lg font-semibold text-gray-800 mb-3">Registros e Ações</h2>
-                <div class="grid grid-cols-2 gap-4">
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Registros e Ações</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- Coluna 1: Lista de Registros -->
-                    <div id="log-container" class="bg-slate-50 rounded-lg p-2 h-48 overflow-y-auto border border-gray-100">
+                    <div id="log-container" class="bg-slate-50 rounded-lg p-2 h-56 overflow-y-auto border border-gray-100">
                         <ul id="log-list" class="space-y-2">
                             <!-- Itens do log serão inseridos aqui -->
                         </ul>
-                        <p id="no-logs-message" class="text-sm text-gray-400 text-center mt-8">Nenhum registro.</p>
+                        <p id="no-logs-message" class="text-sm text-gray-400 text-center mt-8">Nenhum registro para este dia ainda.</p>
                     </div>
 
                     <!-- Coluna 2: Controles -->
-                    <div class="space-y-3">
+                    <div class="space-y-4">
                         <div>
-                            <label for="date-picker" class="block mb-1 text-xs font-medium text-gray-600">Visualizar dia</label>
-                            <input type="date" id="date-picker" class="w-full bg-slate-50 border border-gray-200 text-gray-600 rounded-md px-3 py-1.5 text-xs focus:ring-2 focus:ring-rose-400 outline-none">
+                            <label for="date-picker" class="block mb-2 text-sm font-medium text-gray-600">Visualizar outro dia</label>
+                            <input type="date" id="date-picker" class="w-full bg-slate-50 border border-gray-200 text-gray-600 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-rose-400 outline-none">
                         </div>
                         <div>
-                            <label class="block mb-1 text-xs font-medium text-gray-600">Backup</label>
-                            <button id="export-btn" class="w-full text-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-all duration-300 border border-gray-300/50 text-xs">
+                            <label class="block mb-2 text-sm font-medium text-gray-600">Exportar dados</label>
+                            <button id="export-btn" class="w-full text-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-all duration-300 border border-gray-300/50 text-sm">
                                 Exportar Dados (JSON)
                             </button>
                         </div>
@@ -238,7 +238,7 @@
                 const description = activityInput.value.trim();
                 // Reset visual feedback
                 activityInput.classList.remove('ring-2', 'ring-red-400');
-                activityInput.placeholder = 'Descreva a atividade...';
+                activityInput.placeholder = 'Ex: Pesquisa para o projeto X';
 
                 if (!description) {
                     activityInput.classList.add('ring-2', 'ring-red-400');
